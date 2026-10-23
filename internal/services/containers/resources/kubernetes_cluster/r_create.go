@@ -295,6 +295,13 @@ func resourceKubernetesClusterCreate(d *pluginsdk.ResourceData, meta any) error 
 		parameters.Properties.IngressProfile = ingressProfile
 	}
 
+	// the installation is always sent, so the managed Gateway API is only installed when the user explicitly enables it,
+	// even if the service-side default for new clusters is changed to `Standard`
+	if parameters.Properties.IngressProfile == nil {
+		parameters.Properties.IngressProfile = &managedclusters.ManagedClusterIngressProfile{}
+	}
+	parameters.Properties.IngressProfile.GatewayAPI = expandKubernetesClusterGatewayAPI(d.Get("gateway_api_enabled").(bool))
+
 	if serviceMeshProfile := expandKubernetesClusterServiceMeshProfile(d.Get("service_mesh_profile").([]any), &managedclusters.ServiceMeshProfile{}); serviceMeshProfile != nil {
 		parameters.Properties.ServiceMeshProfile = serviceMeshProfile
 	}

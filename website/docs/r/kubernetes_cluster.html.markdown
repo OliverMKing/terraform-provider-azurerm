@@ -113,6 +113,8 @@ In addition, one of either `identity` or `service_principal` blocks must be spec
 
 * `edge_zone` - (Optional) Specifies the Extended Zone (formerly called Edge Zone) within the Azure Region where this Managed Kubernetes Cluster should exist. Changing this forces a new resource to be created.
 
+* `gateway_api_enabled` - (Optional) Should the managed Gateway API installation be enabled? When `true`, AKS installs and manages the Gateway API CRDs from the `standard` release channel that match the Kubernetes version of the cluster. Defaults to `false`. For more details, please visit [Managed Gateway API installation](https://aka.ms/k8s-gateway-api).
+
 * `http_application_routing_enabled` - (Optional) Should HTTP Application Routing be enabled?
 
 -> **Note:** At this time HTTP Application Routing is not supported in Azure China or Azure US Government.

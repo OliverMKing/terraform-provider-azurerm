@@ -728,6 +728,14 @@ func flattenKubernetesClusterIngressProfile(input *managedclusters.ManagedCluste
 	return []any{out}
 }
 
+func flattenKubernetesClusterGatewayAPIEnabled(input *managedclusters.ManagedClusterIngressProfile) bool {
+	if input == nil || input.GatewayAPI == nil || input.GatewayAPI.Installation == nil {
+		return false
+	}
+
+	return *input.GatewayAPI.Installation != managedclusters.ManagedGatewayTypeDisabled
+}
+
 func flattenKubernetesClusterAzureServiceMeshProfile(input *managedclusters.ServiceMeshProfile) []any {
 	if input == nil || input.Mode != managedclusters.ServiceMeshModeIstio {
 		return []any{}

@@ -772,6 +772,17 @@ func expandKubernetesClusterIngressProfile(d *pluginsdk.ResourceData, input []an
 	return &out
 }
 
+func expandKubernetesClusterGatewayAPI(enabled bool) *managedclusters.ManagedClusterIngressProfileGatewayConfiguration {
+	installation := managedclusters.ManagedGatewayTypeDisabled
+	if enabled {
+		installation = managedclusters.ManagedGatewayTypeStandard
+	}
+
+	return &managedclusters.ManagedClusterIngressProfileGatewayConfiguration{
+		Installation: pointer.To(installation),
+	}
+}
+
 func expandKubernetesClusterAzureMonitorProfile(input []any) *managedclusters.ManagedClusterAzureMonitorProfile {
 	if len(input) == 0 {
 		return &managedclusters.ManagedClusterAzureMonitorProfile{

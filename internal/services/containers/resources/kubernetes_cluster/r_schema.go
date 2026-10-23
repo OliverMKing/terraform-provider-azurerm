@@ -299,6 +299,12 @@ func kubernetesClusterSchema() map[string]*pluginsdk.Schema {
 			Computed: true,
 		},
 
+		"gateway_api_enabled": {
+			Type:     pluginsdk.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+
 		"http_proxy_config": {
 			Type:     pluginsdk.TypeList,
 			Optional: true,

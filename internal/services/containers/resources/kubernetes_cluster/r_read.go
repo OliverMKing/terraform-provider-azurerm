@@ -269,6 +269,8 @@ func resourceKubernetesClusterRead(d *pluginsdk.ResourceData, meta any) error {
 				return fmt.Errorf("setting `web_app_routing`: %+v", err)
 			}
 
+			d.Set("gateway_api_enabled", flattenKubernetesClusterGatewayAPIEnabled(props.IngressProfile))
+
 			workloadIdentity := false
 			if props.SecurityProfile != nil && props.SecurityProfile.WorkloadIdentity != nil {
 				workloadIdentity = *props.SecurityProfile.WorkloadIdentity.Enabled

@@ -967,6 +967,38 @@ func TestAccKubernetesCluster_webAppRoutingWithNginxControllerType(t *testing.T)
 	})
 }
 
+func TestAccKubernetesCluster_gatewayAPI(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurerm_kubernetes_cluster", "test")
+	r := KubernetesClusterResource{}
+
+	data.ResourceTest(t, r, []acceptance.TestStep{
+		{
+			Config: r.gatewayAPI(data, ""),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("gateway_api_enabled").HasValue("false"),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.gatewayAPI(data, "true"),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("gateway_api_enabled").HasValue("true"),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.gatewayAPI(data, "false"),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("gateway_api_enabled").HasValue("false"),
+			),
+		},
+		data.ImportStep(),
+	})
+}
+
 func TestAccKubernetesCluster_azureMonitorKubernetesMetrics(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm_kubernetes_cluster", "test")
 	r := KubernetesClusterResource{}
@@ -3530,6 +3562,50 @@ resource "azurerm_kubernetes_cluster" "test" {
   }
 }
  `, data.Locations.Primary, data.RandomInteger, defaultNginxController)
+}
+
+func (KubernetesClusterResource) gatewayAPI(data acceptance.TestData, enabled string) string {
+	gatewayAPIEnabled := ""
+	if enabled != "" {
+		gatewayAPIEnabled = fmt.Sprintf(`gateway_api_enabled = %s`, enabled)
+	}
+	return fmt.Sprintf(`
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "test" {
+  name     = "acctestRG-aks-%[2]d"
+  location = "%[1]s"
+}
+
+resource "azurerm_kubernetes_cluster" "test" {
+  name                = "acctestaks%[2]d"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+  dns_prefix          = "acctestaks%[2]d"
+
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_DS2_v2"
+    upgrade_settings {
+      max_surge = "10%%"
+    }
+  }
+
+  node_provisioning_profile {
+    mode               = "Manual"
+    default_node_pools = "Auto"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  %[3]s
+}
+ `, data.Locations.Primary, data.RandomInteger, gatewayAPIEnabled)
 }
 
 func (KubernetesClusterResource) azureMonitorKubernetesMetricsEnabled(data acceptance.TestData) string {
