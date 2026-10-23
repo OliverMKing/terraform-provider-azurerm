@@ -736,6 +736,14 @@ func flattenKubernetesClusterGatewayAPIEnabled(input *managedclusters.ManagedClu
 	return *input.GatewayAPI.Installation != managedclusters.ManagedGatewayTypeDisabled
 }
 
+func flattenKubernetesClusterAppRoutingIstioEnabled(input *managedclusters.ManagedClusterIngressProfile) bool {
+	if input == nil || input.WebAppRouting == nil || input.WebAppRouting.GatewayAPIImplementations == nil || input.WebAppRouting.GatewayAPIImplementations.AppRoutingIstio == nil {
+		return false
+	}
+
+	return pointer.From(input.WebAppRouting.GatewayAPIImplementations.AppRoutingIstio.Mode) == managedclusters.GatewayAPIIstioEnabledEnabled
+}
+
 func flattenKubernetesClusterAzureServiceMeshProfile(input *managedclusters.ServiceMeshProfile) []any {
 	if input == nil || input.Mode != managedclusters.ServiceMeshModeIstio {
 		return []any{}

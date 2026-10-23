@@ -63,6 +63,12 @@ func kubernetesClusterSchema() map[string]*pluginsdk.Schema {
 			},
 		},
 
+		"app_routing_istio_enabled": {
+			Type:     pluginsdk.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+
 		"automatic_upgrade_channel": {
 			Type:     pluginsdk.TypeString,
 			Optional: true,

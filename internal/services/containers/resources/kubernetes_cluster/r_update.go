@@ -550,6 +550,18 @@ func resourceKubernetesClusterUpdate(d *pluginsdk.ResourceData, meta any) error 
 		existing.Model.Properties.IngressProfile.GatewayAPI = expandKubernetesClusterGatewayAPI(d.Get("gateway_api_enabled").(bool))
 	}
 
+	// this must come after `web_app_routing`, which replaces the whole ingress profile
+	if d.HasChange("app_routing_istio_enabled") {
+		updateCluster = true
+		if existing.Model.Properties.IngressProfile == nil {
+			existing.Model.Properties.IngressProfile = &managedclusters.ManagedClusterIngressProfile{}
+		}
+		if existing.Model.Properties.IngressProfile.WebAppRouting == nil {
+			existing.Model.Properties.IngressProfile.WebAppRouting = &managedclusters.ManagedClusterIngressProfileWebAppRouting{}
+		}
+		existing.Model.Properties.IngressProfile.WebAppRouting.GatewayAPIImplementations = expandKubernetesClusterAppRoutingIstio(d.Get("app_routing_istio_enabled").(bool))
+	}
+
 	if d.HasChange("support_plan") {
 		updateCluster = true
 		existing.Model.Properties.SupportPlan = pointer.ToEnum[managedclusters.KubernetesSupportPlan](d.Get("support_plan").(string))

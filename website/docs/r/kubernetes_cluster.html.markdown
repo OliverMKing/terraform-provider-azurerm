@@ -97,6 +97,12 @@ In addition, one of either `identity` or `service_principal` blocks must be spec
 
 * `api_server_access_profile` - (Optional) An `api_server_access_profile` block as defined below.
 
+* `app_routing_istio_enabled` - (Optional) Should the App Routing Gateway API implementation be enabled? This deploys an ingress-only Istio control plane that manages infrastructure for Kubernetes Gateway API resources that use the `approuting-istio` GatewayClass. It doesn't require the `web_app_routing` block. Defaults to `false`. For more details, please visit [App Routing with the Kubernetes Gateway API](https://learn.microsoft.com/azure/aks/app-routing-gateway-api).
+
+-> **Note:** The App Routing Gateway API implementation requires the managed Gateway API installation, so `gateway_api_enabled` should also be set to `true`.
+
+~> **Note:** `app_routing_istio_enabled` can't be enabled together with the `service_mesh_profile` block. To switch between them, disable one in a separate apply before you enable the other.
+
 * `auto_scaler_profile` - (Optional) A `auto_scaler_profile` block as defined below.
 
 * `azure_active_directory_role_based_access_control` - (Optional) A `azure_active_directory_role_based_access_control` block as defined below.

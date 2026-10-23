@@ -783,6 +783,19 @@ func expandKubernetesClusterGatewayAPI(enabled bool) *managedclusters.ManagedClu
 	}
 }
 
+func expandKubernetesClusterAppRoutingIstio(enabled bool) *managedclusters.ManagedClusterWebAppRoutingGatewayAPIImplementations {
+	mode := managedclusters.GatewayAPIIstioEnabledDisabled
+	if enabled {
+		mode = managedclusters.GatewayAPIIstioEnabledEnabled
+	}
+
+	return &managedclusters.ManagedClusterWebAppRoutingGatewayAPIImplementations{
+		AppRoutingIstio: &managedclusters.ManagedClusterAppRoutingIstio{
+			Mode: pointer.To(mode),
+		},
+	}
+}
+
 func expandKubernetesClusterAzureMonitorProfile(input []any) *managedclusters.ManagedClusterAzureMonitorProfile {
 	if len(input) == 0 {
 		return &managedclusters.ManagedClusterAzureMonitorProfile{

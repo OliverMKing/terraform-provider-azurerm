@@ -302,6 +302,13 @@ func resourceKubernetesClusterCreate(d *pluginsdk.ResourceData, meta any) error 
 	}
 	parameters.Properties.IngressProfile.GatewayAPI = expandKubernetesClusterGatewayAPI(d.Get("gateway_api_enabled").(bool))
 
+	if d.Get("app_routing_istio_enabled").(bool) {
+		if parameters.Properties.IngressProfile.WebAppRouting == nil {
+			parameters.Properties.IngressProfile.WebAppRouting = &managedclusters.ManagedClusterIngressProfileWebAppRouting{}
+		}
+		parameters.Properties.IngressProfile.WebAppRouting.GatewayAPIImplementations = expandKubernetesClusterAppRoutingIstio(true)
+	}
+
 	if serviceMeshProfile := expandKubernetesClusterServiceMeshProfile(d.Get("service_mesh_profile").([]any), &managedclusters.ServiceMeshProfile{}); serviceMeshProfile != nil {
 		parameters.Properties.ServiceMeshProfile = serviceMeshProfile
 	}
